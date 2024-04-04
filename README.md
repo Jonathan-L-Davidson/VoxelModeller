@@ -1,10 +1,23 @@
+# Voxel Modeller
+<p>A tool designed to support developers creating Voxel stylised 3D models and exporting them as standard file formats for a wide range of software.</p>
 
-# <a href=https://github.com/electron-react-boilerplate/electron-react-boilerplate/>Utilising the Electron React Boilerplate</a>
+<p>The goal of the tool is to provide intiutive controls using industrial standards based on other 3D modelling software such as Blender and Autodesk software, and making the UI easy to use for anyone to utilise this program.</p>
+
+## Features
+<ul>
+  <li>Mouse based camera movement</li>
+  <li>Exporting/Importing Voxels</li>
+  <li>Exporting to 3D model files</li>
+  <li>Creating a model using a voxel map</li>
+</ul>
+
+<br><br>
+
+<p><i>This project was created for my university assignment, Tools Development; which we are tasked to create a tool to assist game developers.</i></p>
+
+
+## External Software used
+### <a href=https://github.com/electron-react-boilerplate/electron-react-boilerplate/>Utilising the Electron React Boilerplate</a>
 <img src=".erb/img/erb-banner.svg" width="100%" />
 
-<br>
-
-<p>
-  Electron React Boilerplate uses <a href="https://electron.atom.io/">Electron</a>, <a href="https://facebook.github.io/react/">React</a>, <a href="https://github.com/reactjs/react-router">React Router</a>, <a href="https://webpack.js.org/">Webpack</a> and <a href="https://www.npmjs.com/package/react-refresh">React Fast Refresh</a>.
-</p>
-
+### Three.JS
