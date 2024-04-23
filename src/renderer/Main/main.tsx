@@ -1,5 +1,5 @@
 import './main.css';
-import '../../components/Three';
+import Three from '../../components/Three';
 
 export default function GetMainModule() {
   // const [toolPanelWidth, SetToolPanelWidth] = useState('30%');
@@ -12,7 +12,9 @@ export default function GetMainModule() {
       <div className="grid-slider">
         <div className="grey" />
       </div>
-      <div className="grid-three"></div>
+      <div className="grid-three">
+        <Three />
+      </div>
     </div>
   );
 }
