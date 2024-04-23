@@ -13,7 +13,9 @@ export default function GetMainModule() {
         <div className="grey" />
       </div>
       <div className="grid-three">
-        <Three />
+        <div className="threeJS-wrapper">
+          <Three />
+        </div>
       </div>
     </div>
   );

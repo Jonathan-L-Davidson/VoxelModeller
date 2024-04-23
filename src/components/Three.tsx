@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useRef, useState } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber/native';
+import { Canvas, useFrame } from '@react-three/fiber';
 
 function OnHoverBox(props) {
   const ref = useRef();
@@ -30,6 +30,8 @@ function Three() {
     <Canvas>
       <ambientLight />
       <pointLight position={[10, 10, 10]} />
+      <OnHoverBox position={[-1.2, 0, 0]} />
+      <OnHoverBox position={[1.2, 0, 0]} />
     </Canvas>
   );
 }
