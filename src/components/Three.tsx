@@ -25,6 +25,16 @@ function OnHoverBox(props) {
   );
 }
 
+function DrawGrid(props) {
+  var gridSizeWidth = 10;
+  var gridSizeHeight = 10;
+  var gridLines = 5;
+
+  return (
+
+  )
+}
+
 function Three() {
   return (
     <Canvas>
