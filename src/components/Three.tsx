@@ -1,14 +1,14 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useRef, useState } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import * as THREE from 'three';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { PerspectiveCamera, CameraControls, Grid } from '@react-three/drei';
 
 function OnHoverBox(props) {
   const ref = useRef();
 
   const [hovered, hover] = useState(false);
   const [clicked, click] = useState(false);
-
-  useFrame((state, delta) => (ref.current.rotation.x += delta));
 
   return (
     <mesh
@@ -25,23 +25,46 @@ function OnHoverBox(props) {
   );
 }
 
-function DrawGrid(props) {
-  var gridSizeWidth = 10;
-  var gridSizeHeight = 10;
-  var gridLines = 5;
+function DrawGrid() {
+  const gridConfig = {
+    cellSize: 1.0,
+    cellThickness: 0.5,
+    cellColor: '#8f8f8f',
+    sectionSize: 5,
+    sectionThickness: 1,
+    sectionColor: '#e0e0e0',
+    fadeDistance: 30,
+    fadeStrength: 1,
+    followCamera: false,
+    infiniteGrid: true,
+  };
 
-  return (
-
-  )
+  return <Grid position={[0, -0.001, 0]} args={[5, 5]} {...gridConfig} />;
 }
 
 function Three() {
+  const cameraControlsRef = useRef();
+
   return (
-    <Canvas>
+    <Canvas shadows camera={{ position: [0, 0, 5], fov: 60 }}>
+      <directionalLight
+        castShadow
+        position={[10, 20, 15]}
+        shadow-camera-right={8}
+        shadow-camera-top={8}
+        shadow-camera-left={-8}
+        shadow-camera-bottom={-8}
+        shadow-mapSize-width={1024}
+        shadow-mapSize-height={1024}
+        intensity={2}
+        shadow-bias={-0.0001}
+      />
       <ambientLight />
       <pointLight position={[10, 10, 10]} />
-      <OnHoverBox position={[-1.2, 0, 0]} />
-      <OnHoverBox position={[1.2, 0, 0]} />
+      <OnHoverBox position={[-1.5, 0.5, 0.5]} />
+      <OnHoverBox position={[1.5, 0.5, 0.5]} />
+      <DrawGrid position={[0, -1, 0]} />
+      <CameraControls ref={cameraControlsRef} />
     </Canvas>
   );
 }

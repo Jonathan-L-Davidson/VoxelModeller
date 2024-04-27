@@ -97,6 +97,7 @@
     }
   },
   "dependencies": {
+    "@react-three/drei": "^9.105.4",
     "@react-three/fiber": "^8.16.2",
     "bootstrap": "^5.3.3",
     "electron-debug": "^3.2.0",
