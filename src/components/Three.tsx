@@ -46,7 +46,7 @@ function Three() {
   const cameraControlsRef = useRef();
 
   return (
-    <Canvas shadows camera={{ position: [0, 0, 5], fov: 60 }}>
+    <Canvas shadows camera={{ position: [0, 0.5, 5], fov: 60 }}>
       <directionalLight
         castShadow
         position={[10, 20, 15]}
