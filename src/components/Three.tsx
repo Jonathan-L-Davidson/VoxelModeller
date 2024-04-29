@@ -4,6 +4,39 @@ import * as THREE from 'three';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { PerspectiveCamera, CameraControls, Grid } from '@react-three/drei';
 
+enum ENeighbours {
+  Up = 1,
+  Down,
+  Left,
+  Right,
+  Forward,
+  Back,
+}
+
+abstract class VoxelDir {
+  public static Up = [0, 1, 0];
+  public static Down = [0, -1, 0];
+  public static Left = [-1, 0, 0];
+  public static Right = [1, 0, 0];
+  public static Forward = [0, 0, 1];
+  public static Back = [0, 0, -1];
+}
+
+class Voxel {
+  public position = new THREE.Vector3(0, 0, 0);
+
+  public neighbours: { [key: number]: Voxel } = {};
+
+  AddNeighbour(dir: ENeighbours) {
+    this.neighbours.Add();
+  }
+
+  // How I want to render the voxel is to get the current size, get position. Add size / 2 to the x and y.
+  // Check where my neighbours are, if there are no neighbours, generate 4 voxels in that dir.
+  // Afterwards, check for duplicate vertices. Then return a list of verts to use.
+  GetVertices() {}
+}
+
 function OnHoverBox(props) {
   const ref = useRef();
 
