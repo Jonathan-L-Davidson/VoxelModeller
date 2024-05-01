@@ -1,10 +1,10 @@
 /* eslint-disable react/no-unknown-property */
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useRef, useState } from 'react';
-import { Canvas, useThree } from '@react-three/fiber';
-import { CameraControls, Grid, Stage } from '@react-three/drei';
+import { Canvas } from '@react-three/fiber';
+import { CameraControls, Grid } from '@react-three/drei';
+import * as THREE from 'three';
 import InputHandler from './ClickHandler';
-import { Camera } from 'three';
 
 function OnHoverBox(props: any) {
   const ref = useRef();
