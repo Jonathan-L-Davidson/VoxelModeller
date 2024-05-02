@@ -7,43 +7,40 @@ enum ButtonInput {
 }
 
 export default class InputHandler {
-  public raycast = new THREE.Raycaster();
+  private raycast = new THREE.Raycaster();
 
-  public mouseXY = new THREE.Vector2();
+  private mouseXY = new THREE.Vector2();
 
-  private camera: THREE.Camera;
-
-  private scene: THREE.Scene;
+  private camera!: THREE.Camera;
 
   // Amount of pixels mouse has to move once clicked to not trigger a click release.
   private placementThreshold: number = 20;
 
   private mouseDown: boolean = false;
 
-  private mouseMoved: boolean = false;
-
   private clickedXY = new THREE.Vector2();
 
-  OnCreate = (state) => {
-    this.camera = state.camera;
-    this.scene = state.scene;
-    // console.log(state);
+  private objects = [];
+
+  AddObject = (obj: Object) => {
+    console.log('MESH CREATED');
+    console.log(obj);
+    this.objects.push(obj);
   };
 
-  OnResize = (event) => {
-    console.log(event);
-    console.log('Resized');
-    // this.viewportSize.set(120, 120);
+  OnCreate = (state) => {
+    // console.log(state);
+    this.camera = state.camera;
   };
 
   OnMouseClick = (event) => {
+    // console.log('Clicked!');
     this.clickedXY.set(event.clientX, event.clientY);
     this.mouseDown = true;
-    // console.log('Clicked!');
   };
 
   OnMouseReleased = (event) => {
-    console.log(event);
+    // console.log(event);
 
     const releasedPos: THREE.Vector2 = new THREE.Vector2(
       event.clientX,
@@ -89,13 +86,21 @@ export default class InputHandler {
   };
 
   UpdateRaycast() {
-    this.raycast.setFromCamera(this.mouseXY, this.camera);
+    if (this.camera && !this.mouseDown) {
+      console.log('PRE-RAYCAST');
+      this.raycast.setFromCamera(this.mouseXY, this.camera);
+      console.log(this.objects);
+      const intersections = this.raycast.intersectObjects(this.objects, false);
 
-    // const intersections = this.raycast.intersectObjects();
-
-    // if there are intersections
-    // get first hit.
-    // get point of intersected object and add the normal of the face it collided with.
-    // Set the position of our highlight to that position.
+      // if there are intersections
+      if (intersections.length > 0) {
+        // get first hit.
+        const intersectedObj = intersections[0];
+        console.log('RAYCAST HIT');
+        console.log(intersectedObj);
+      }
+      // get point of intersected object and add the normal of the face it collided with.
+      // Set the position of our highlight to that position.
+    }
   }
 }

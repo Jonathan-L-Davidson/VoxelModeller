@@ -12,6 +12,8 @@ function OnHoverBox(props: any) {
   const [hovered, hover] = useState(false);
   const [clicked, click] = useState(false);
 
+  props.objAdd(ref);
+
   return (
     <mesh
       {...props}
@@ -62,8 +64,8 @@ function Three() {
       <pointLight position={[10, 10, 10]} />
       <directionalLight position={[10, 20, 15]} intensity={2} />
       <ambientLight />
-      <OnHoverBox position={[-1.5, 0.5, 0.5]} />
-      <OnHoverBox position={[1.5, 0.5, 0.5]} />
+      <OnHoverBox position={[-1.5, 0.5, 0.5]} objAdd={input.AddObject} />
+      <OnHoverBox position={[1.5, 0.5, 0.5]} objAdd={input.AddObject} />
       <DrawGrid position={[0, 0, 0]} />
       <CameraControls makeDefault />
     </Canvas>
