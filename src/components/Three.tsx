@@ -1,7 +1,7 @@
 /* eslint-disable react/no-unknown-property */
 /* eslint-disable react/jsx-props-no-spreading */
-import React, { useRef, useState } from 'react';
-import { Canvas } from '@react-three/fiber';
+import React, { useEffect, useRef, useState } from 'react';
+import { Canvas, useGraph } from '@react-three/fiber';
 import { CameraControls, Grid } from '@react-three/drei';
 import * as THREE from 'three';
 import InputHandler from './ClickHandler';
@@ -12,7 +12,9 @@ function OnHoverBox(props: any) {
   const [hovered, hover] = useState(false);
   const [clicked, click] = useState(false);
 
-  props.objAdd(ref);
+  useEffect(() => {
+    props.objAdd(ref);
+  });
 
   return (
     <mesh

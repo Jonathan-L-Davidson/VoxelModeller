@@ -22,10 +22,11 @@ export default class InputHandler {
 
   private objects = [];
 
-  AddObject = (obj: Object) => {
-    console.log('MESH CREATED');
-    console.log(obj);
-    this.objects.push(obj);
+  AddObject = (obj) => {
+    // console.log(obj);
+    if (!this.objects.includes(obj.current)) {
+      this.objects.push(obj.current);
+    }
   };
 
   OnCreate = (state) => {
@@ -75,7 +76,7 @@ export default class InputHandler {
     // X / width = 0 to 1. Multiply by 2 so it's a 0 to 2, minus 1 so it's -1 to 1.
     const movedInput = new THREE.Vector2(
       (mouseRelativePos.x / event.target.clientWidth) * 2 - 1,
-      (mouseRelativePos.y / event.target.clientHeight) * 2 - 1,
+      -(mouseRelativePos.y / event.target.clientHeight) * 2 + 1,
     );
 
     // console.log(movedInput);
@@ -87,19 +88,22 @@ export default class InputHandler {
 
   UpdateRaycast() {
     if (this.camera && !this.mouseDown) {
-      console.log('PRE-RAYCAST');
+      // console.log('PRE-RAYCAST');
       this.raycast.setFromCamera(this.mouseXY, this.camera);
-      console.log(this.objects);
+      // console.log(this.objects);
       const intersections = this.raycast.intersectObjects(this.objects, false);
 
       // if there are intersections
       if (intersections.length > 0) {
         // get first hit.
         const intersectedObj = intersections[0];
-        console.log('RAYCAST HIT');
-        console.log(intersectedObj);
+        //console.log('RAYCAST HIT');
+        //console.log(intersectedObj);
+
+        // get point of intersected object and add the normal of the face it collided with.
+        // const location = intersectedObj.point + intersectedObj.face?.normal;
+        // console.log(location);
       }
-      // get point of intersected object and add the normal of the face it collided with.
       // Set the position of our highlight to that position.
     }
   }
