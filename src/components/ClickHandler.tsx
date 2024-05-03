@@ -1,3 +1,4 @@
+import Settings from './Settings';
 import * as THREE from 'three';
 
 enum ButtonInput {
@@ -7,7 +8,11 @@ enum ButtonInput {
 }
 
 export default class InputHandler {
+  public settings;
+
   private raycast = new THREE.Raycaster();
+
+  private scene!: THREE.Scene;
 
   private mouseXY = new THREE.Vector2();
 
@@ -22,16 +27,56 @@ export default class InputHandler {
 
   private objects = [];
 
+  private highlightGeo;
+
+  highlightMat = new THREE.MeshBasicMaterial({
+    color: 0xff0000,
+    opacity: 0.5,
+    transparent: true,
+  });
+
+  private highlightMesh;
+
+  private floorPlaneGeo;
+  private floorPlane;
+
+  constructor(settings: Settings) {
+    this.settings = settings;
+
+    this.floorPlaneGeo = new THREE.PlaneGeometry(
+      300 * this.settings.cellSize,
+      300 * this.settings.cellSize,
+    );
+    this.floorPlane = new THREE.Mesh(
+      this.floorPlaneGeo,
+      new THREE.MeshBasicMaterial({ visible: false, side: THREE.DoubleSide }),
+    );
+
+    this.floorPlane.rotateX(-0.5 * Math.PI);
+    this.objects.push(this.floorPlane);
+
+    this.highlightGeo = new THREE.BoxGeometry(
+      this.settings.cellSize,
+      this.settings.cellSize,
+      this.settings.cellSize,
+    );
+
+    this.highlightMesh = new THREE.Mesh(this.highlightGeo, this.highlightMat);
+  }
+
+  OnCreate = (state) => {
+    // console.log(state);
+    this.camera = state.camera;
+    this.scene = state.scene;
+    this.scene.add(this.highlightMesh);
+    this.scene.add(this.floorPlane);
+  };
+
   AddObject = (obj) => {
     // console.log(obj);
     if (!this.objects.includes(obj.current)) {
       this.objects.push(obj.current);
     }
-  };
-
-  OnCreate = (state) => {
-    // console.log(state);
-    this.camera = state.camera;
   };
 
   OnMouseClick = (event) => {
@@ -101,8 +146,14 @@ export default class InputHandler {
         //console.log(intersectedObj);
 
         // get point of intersected object and add the normal of the face it collided with.
-        // const location = intersectedObj.point + intersectedObj.face?.normal;
-        // console.log(location);
+        this.highlightMesh.position
+          .copy(intersectedObj.point)
+          .add(intersectedObj.face?.normal);
+        this.highlightMesh.position
+          .divideScalar(this.settings.cellSize)
+          .floor()
+          .multiplyScalar(this.settings.cellSize)
+          .addScalar(this.settings.cellSize * 0.5);
       }
       // Set the position of our highlight to that position.
     }
