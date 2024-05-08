@@ -1,5 +1,6 @@
 import Settings from './Settings';
 import * as THREE from 'three';
+import VoxelScene from './Voxel/VoxelScene';
 
 enum ButtonInput {
   left = 0,
@@ -8,7 +9,7 @@ enum ButtonInput {
 }
 
 export default class InputHandler {
-  public settings;
+  private voxelScene: VoxelScene;
 
   private raycast = new THREE.Raycaster();
 
@@ -40,12 +41,10 @@ export default class InputHandler {
   private floorPlaneGeo;
   private floorPlane;
 
-  constructor(settings: Settings) {
-    this.settings = settings;
-
+  constructor(voxelScene) {
     this.floorPlaneGeo = new THREE.PlaneGeometry(
-      300 * this.settings.cellSize,
-      300 * this.settings.cellSize,
+      300 * Settings.cellSize,
+      300 * Settings.cellSize,
     );
     this.floorPlane = new THREE.Mesh(
       this.floorPlaneGeo,
@@ -56,12 +55,14 @@ export default class InputHandler {
     this.objects.push(this.floorPlane);
 
     this.highlightGeo = new THREE.BoxGeometry(
-      this.settings.cellSize,
-      this.settings.cellSize,
-      this.settings.cellSize,
+      Settings.cellSize,
+      Settings.cellSize,
+      Settings.cellSize,
     );
 
     this.highlightMesh = new THREE.Mesh(this.highlightGeo, this.highlightMat);
+
+    this.voxelScene = voxelScene;
   }
 
   OnCreate = (state) => {
@@ -70,6 +71,7 @@ export default class InputHandler {
     this.scene = state.scene;
     this.scene.add(this.highlightMesh);
     this.scene.add(this.floorPlane);
+    this.scene.add(this.voxelScene.GetVoxelGroup());
   };
 
   AddObject = (obj) => {
@@ -99,9 +101,11 @@ export default class InputHandler {
       switch (event.button) {
         case ButtonInput.left:
           console.log('Place Voxel');
+          this.voxelScene.AddVoxel(this.highlightMesh.position.floor(), null);
           break;
         case ButtonInput.right:
           console.log('Remove Voxel');
+          this.voxelScene.RemoveVoxel(this.highlightMesh.position.floor());
           break;
         default:
           break;
@@ -142,18 +146,17 @@ export default class InputHandler {
       if (intersections.length > 0) {
         // get first hit.
         const intersectedObj = intersections[0];
-        //console.log('RAYCAST HIT');
-        //console.log(intersectedObj);
 
         // get point of intersected object and add the normal of the face it collided with.
         this.highlightMesh.position
           .copy(intersectedObj.point)
           .add(intersectedObj.face?.normal);
+
         this.highlightMesh.position
-          .divideScalar(this.settings.cellSize)
+          .divideScalar(Settings.cellSize)
           .floor()
-          .multiplyScalar(this.settings.cellSize)
-          .addScalar(this.settings.cellSize * 0.5);
+          .multiplyScalar(Settings.cellSize)
+          .addScalar(Settings.cellSize * 0.5);
       }
       // Set the position of our highlight to that position.
     }

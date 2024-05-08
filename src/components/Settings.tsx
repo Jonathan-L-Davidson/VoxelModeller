@@ -1,3 +1,4 @@
-export default class Settings {
-  public cellSize = 10;
+export default abstract class Settings {
+  public static cellSize = 10;
+  public static maxVoxels = 300;
 }

@@ -6,6 +6,7 @@ import { CameraControls, Grid } from '@react-three/drei';
 import * as THREE from 'three';
 import InputHandler from './ClickHandler';
 import Settings from './Settings';
+import VoxelScene from './Voxel/VoxelScene';
 
 function OnHoverBox(props: any) {
   const ref = useRef();
@@ -40,9 +41,9 @@ function DrawGrid(props: any) {
     sectionSize: 5 * props.cellSize,
     sectionThickness: 2,
     sectionColor: '#e0e0e0',
-    fadeDistance: 30 * props.cellSize,
-    fadeStrength: 1,
-    followCamera: false,
+    fadeDistance: 100 * props.cellSize,
+    fadeStrength: 1 * props.cellSize,
+    followCamera: true,
     infiniteGrid: true,
   };
 
@@ -52,13 +53,13 @@ function DrawGrid(props: any) {
 }
 
 function Three() {
-  const settings = new Settings();
-  const input = new InputHandler(settings);
+  const voxelScene = new VoxelScene();
+  const input = new InputHandler(voxelScene);
 
   return (
     <Canvas
       shadows
-      camera={{ position: [0, 5, 10 * settings.cellSize], fov: 60 }}
+      camera={{ position: [0, 5, 10 * Settings.cellSize], fov: 60 }}
       onMouseDown={input.OnMouseClick}
       onMouseUp={input.OnMouseReleased}
       onPointerMove={input.OnMouseMove}
@@ -67,25 +68,7 @@ function Three() {
       <pointLight position={[10, 10, 10]} />
       <directionalLight position={[10, 20, 15]} intensity={2} />
       <ambientLight />
-      <OnHoverBox
-        position={[
-          -1 * settings.cellSize + settings.cellSize * 0.5,
-          0 * settings.cellSize + settings.cellSize * 0.5,
-          0 * settings.cellSize + settings.cellSize * 0.5,
-        ]}
-        objAdd={input.AddObject}
-        cellSize={settings.cellSize}
-      />
-      <OnHoverBox
-        position={[
-          1 * settings.cellSize + settings.cellSize * 0.5,
-          0 * settings.cellSize + settings.cellSize * 0.5,
-          0 * settings.cellSize + settings.cellSize * 0.5,
-        ]}
-        objAdd={input.AddObject}
-        cellSize={settings.cellSize}
-      />
-      <DrawGrid position={[0, 0.1, 0]} cellSize={settings.cellSize} />
+      <DrawGrid position={[0, 0.2, 0]} cellSize={Settings.cellSize} />
       <CameraControls makeDefault />
     </Canvas>
   );
