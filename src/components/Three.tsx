@@ -1,9 +1,16 @@
 /* eslint-disable react/no-unknown-property */
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { useEffect, useRef, useState } from 'react';
-import { Canvas, useGraph } from '@react-three/fiber';
+import { Canvas } from '@react-three/fiber';
 import { CameraControls, Grid } from '@react-three/drei';
-import * as THREE from 'three';
+// Post process libraries provided by Poimandres, who also made react-three fiber.
+import {
+  N8AO,
+  SMAA,
+  EffectComposer,
+  Outline,
+} from '@react-three/postprocessing';
+
 import InputHandler from './ClickHandler';
 import Settings from './Settings';
 import VoxelScene from './Voxel/VoxelScene';
@@ -59,17 +66,44 @@ function Three() {
   return (
     <Canvas
       shadows
-      camera={{ position: [0, 5, 10 * Settings.cellSize], fov: 60 }}
+      gl={{ antialias: false }} // Use postprocessing SMAA instead.
+      camera={{
+        position: [0, Settings.cellSize, Settings.cellSize * 2],
+        fov: 70,
+      }}
       onMouseDown={input.OnMouseClick}
       onMouseUp={input.OnMouseReleased}
       onPointerMove={input.OnMouseMove}
-      onCreated={input.OnCreate}
+      onCreated={(event) => {
+        voxelScene.Init(event);
+        input.OnCreate(event);
+      }}
     >
-      <pointLight position={[10, 10, 10]} />
-      <directionalLight position={[10, 20, 15]} intensity={2} />
-      <ambientLight />
+      <directionalLight
+        position={[
+          1 * Settings.cellSize,
+          50 * Settings.cellSize,
+          50 * Settings.cellSize,
+        ]}
+        intensity={2}
+        castShadow
+        shadow-mapSize={[512, 512]}
+      />
+      <ambientLight intensity={0.8} />
       <DrawGrid position={[0, 0.2, 0]} cellSize={Settings.cellSize} />
       <CameraControls makeDefault />
+      <EffectComposer multisampling={0}>
+        <Outline selection={voxelScene.voxelGroup} />
+        <N8AO
+          halfRes
+          color="black"
+          aoRadius={2}
+          intensity={1}
+          aoSamples={6}
+          denoiseSamples={4}
+        />
+        <SMAA />
+      </EffectComposer>
     </Canvas>
   );
 }

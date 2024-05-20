@@ -11,9 +11,12 @@ enum ButtonInput {
 export default class InputHandler {
   private voxelScene: VoxelScene;
 
-  private raycast = new THREE.Raycaster();
-
   private scene!: THREE.Scene;
+
+  // ----------------------------------------
+  // Input handling
+  // ----------------------------------------
+  private raycast = new THREE.Raycaster();
 
   private mouseXY = new THREE.Vector2();
 
@@ -26,7 +29,12 @@ export default class InputHandler {
 
   private clickedXY = new THREE.Vector2();
 
+  // ----------------------------------------
+  // Voxel placement helpers
+  // ----------------------------------------
   private objects = [];
+
+  private selectedMesh;
 
   private highlightGeo;
 
@@ -38,7 +46,9 @@ export default class InputHandler {
 
   private highlightMesh;
 
+  // Used for the floor click detection.
   private floorPlaneGeo;
+
   private floorPlane;
 
   constructor(voxelScene) {
@@ -50,6 +60,8 @@ export default class InputHandler {
       this.floorPlaneGeo,
       new THREE.MeshBasicMaterial({ visible: false, side: THREE.DoubleSide }),
     );
+
+    this.floorPlane.position.setY(0.1);
 
     this.floorPlane.rotateX(-0.5 * Math.PI);
     this.objects.push(this.floorPlane);
@@ -71,7 +83,6 @@ export default class InputHandler {
     this.scene = state.scene;
     this.scene.add(this.highlightMesh);
     this.scene.add(this.floorPlane);
-    this.scene.add(this.voxelScene.GetVoxelGroup());
   };
 
   AddObject = (obj) => {
@@ -101,11 +112,13 @@ export default class InputHandler {
       switch (event.button) {
         case ButtonInput.left:
           console.log('Place Voxel');
-          this.voxelScene.AddVoxel(this.highlightMesh.position.floor(), null);
+          this.voxelScene.AddVoxel(this.highlightMesh.position, null);
+          this.UpdateRaycast(); // update collision.
           break;
         case ButtonInput.right:
           console.log('Remove Voxel');
-          this.voxelScene.RemoveVoxel(this.highlightMesh.position.floor());
+          this.voxelScene.RemoveVoxel(this.selectedMesh);
+          this.UpdateRaycast(); // update collision.
           break;
         default:
           break;
@@ -140,12 +153,18 @@ export default class InputHandler {
       // console.log('PRE-RAYCAST');
       this.raycast.setFromCamera(this.mouseXY, this.camera);
       // console.log(this.objects);
-      const intersections = this.raycast.intersectObjects(this.objects, false);
+
+      // Concat merges two arrays together:
+      const hitList = this.objects.concat(this.voxelScene.voxelMeshes);
+
+      const intersections = this.raycast.intersectObjects(hitList, false);
 
       // if there are intersections
       if (intersections.length > 0) {
         // get first hit.
         const intersectedObj = intersections[0];
+
+        this.selectedMesh = intersectedObj.object.position;
 
         // get point of intersected object and add the normal of the face it collided with.
         this.highlightMesh.position

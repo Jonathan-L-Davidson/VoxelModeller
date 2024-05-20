@@ -3,12 +3,25 @@ import Voxel from './Voxel';
 import Settings from '../Settings';
 
 export default class VoxelScene {
+  private scene: THREE.Scene;
+
   private voxels: Map<string, Voxel> = new Map<string, Voxel>();
 
-  public voxelGroup: THREE.Group = new THREE.Group();
+  public voxelMeshes = [];
 
-  GetVoxelGroup() {
-    return this.voxelGroup;
+  public voxelGroup = new THREE.Group();
+
+  private voxelMaterial = new THREE.MeshStandardMaterial({ color: 0xd98d26 });
+
+  private voxelGeometry = new THREE.BoxGeometry(
+    Settings.cellSize,
+    Settings.cellSize,
+    Settings.cellSize,
+  );
+
+  Init(event) {
+    this.scene = event.scene;
+    this.scene.add(this.voxelGroup);
   }
 
   // Position MUST be floored() and divided by voxelsize, props are data for voxel
@@ -29,10 +42,10 @@ export default class VoxelScene {
       let voxel = new Voxel(props, pos);
 
       // Some reason using pos as the setter will also update the index element for the value.
-      // Thanks javascript!
+      // Thanks javascript! The solution was to stringify/serialise it.
 
-      // I've tried many, right now I'm using an array of the x y z but it still doesn't work...
       this.voxels.set(positionString, voxel);
+      console.log(position);
 
       this.UpdateVoxelGeometry();
     }
@@ -43,25 +56,26 @@ export default class VoxelScene {
     pos.copy(position);
     const positionString: string = JSON.stringify(pos);
 
+    console.log(position);
+
     this.voxels.delete(positionString);
+    this.UpdateVoxelGeometry();
   }
 
   UpdateVoxelGeometry() {
+    this.voxelMeshes = []; // Clear mesh array.
     this.voxelGroup.clear();
-    // Generate a mesh using the voxel information.
-    // Maybe scan through each x y z and find linked voxels. Using the greedy mesh algorithm.
-    this.voxels.forEach((voxel, pos) => {
-      this.voxelGroup.add(voxel.GetMesh());
+    this.voxels.forEach((voxels) => {
+      const mesh = new THREE.Mesh(this.voxelGeometry, this.voxelMaterial);
+      mesh.receiveShadow = true;
+      mesh.castShadow = true;
+      mesh.position.set(
+        voxels.position.x,
+        voxels.position.y,
+        voxels.position.z,
+      );
+      this.voxelGroup.add(mesh);
+      this.voxelMeshes.push(mesh);
     });
-
-    // for (let z = 0; z < Settings.maxVoxels; z++) {
-    //   for (let y = 0; y < Settings.maxVoxels; y++) {
-    //     for (let x = 0; x < Settings.maxVoxels; x++) {
-    //       const voxPos = new THREE.Vector3(x, y, z);
-    //       const voxel: Voxel = this.voxels.get(voxPos);
-    //       console.log(voxel);
-    //     }
-    //   }
-    // }
   }
 }
