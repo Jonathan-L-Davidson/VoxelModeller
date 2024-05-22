@@ -59,53 +59,63 @@ function DrawGrid(props: any) {
   return <Grid position={position} args={[1, 1]} {...gridConfig} />;
 }
 
-function Three() {
-  const voxelScene = new VoxelScene();
-  const input = new InputHandler(voxelScene);
+class Three extends React.Component {
+  private voxelScene;
 
-  return (
-    <Canvas
-      shadows
-      gl={{ antialias: false }} // Use postprocessing SMAA instead.
-      camera={{
-        position: [0, Settings.cellSize, Settings.cellSize * 2],
-        fov: 70,
-      }}
-      onMouseDown={input.OnMouseClick}
-      onMouseUp={input.OnMouseReleased}
-      onPointerMove={input.OnMouseMove}
-      onCreated={(event) => {
-        voxelScene.Init(event);
-        input.OnCreate(event);
-      }}
-    >
-      <directionalLight
-        position={[
-          1 * Settings.cellSize,
-          50 * Settings.cellSize,
-          50 * Settings.cellSize,
-        ]}
-        intensity={2}
-        castShadow
-        shadow-mapSize={[512, 512]}
-      />
-      <ambientLight intensity={0.8} />
-      <DrawGrid position={[0, 0.2, 0]} cellSize={Settings.cellSize} />
-      <CameraControls makeDefault />
-      <EffectComposer multisampling={0}>
-        <Outline selection={voxelScene.voxelGroup} />
-        <N8AO
-          halfRes
-          color="black"
-          aoRadius={2}
-          intensity={1}
-          aoSamples={6}
-          denoiseSamples={4}
+  private input;
+
+  constructor(props) {
+    super(props);
+    this.voxelScene = props.voxelScene;
+    console.log(this.voxelScene);
+    this.input = new InputHandler(this.voxelScene);
+  }
+
+  render() {
+    return (
+      <Canvas
+        shadows
+        gl={{ antialias: false }} // Use postprocessing SMAA instead.
+        camera={{
+          position: [0, Settings.cellSize, Settings.cellSize * 2],
+          fov: 70,
+        }}
+        onMouseDown={this.input.OnMouseClick}
+        onMouseUp={this.input.OnMouseReleased}
+        onPointerMove={this.input.OnMouseMove}
+        onCreated={(event) => {
+          this.voxelScene.Init(event);
+          this.input.OnCreate(event);
+        }}
+      >
+        <directionalLight
+          position={[
+            1 * Settings.cellSize,
+            50 * Settings.cellSize,
+            50 * Settings.cellSize,
+          ]}
+          intensity={2}
+          castShadow
+          shadow-mapSize={[512, 512]}
         />
-        <SMAA />
-      </EffectComposer>
-    </Canvas>
-  );
+        <ambientLight intensity={0.8} />
+        <DrawGrid position={[0, 0.2, 0]} cellSize={Settings.cellSize} />
+        <CameraControls makeDefault />
+        <EffectComposer multisampling={0}>
+          <Outline selection={this.voxelScene.voxelGroup} />
+          <N8AO
+            halfRes
+            color="black"
+            aoRadius={2}
+            intensity={1}
+            aoSamples={6}
+            denoiseSamples={4}
+          />
+          <SMAA />
+        </EffectComposer>
+      </Canvas>
+    );
+  }
 }
 
 export default Three;
