@@ -1,8 +1,8 @@
 import './main.css';
 import { useRef } from 'react';
 import Three from '../../components/Three';
-import ExportDropdown from '../../components/exportPanel';
 import VoxelScene from '../../components/Voxel/VoxelScene';
+import Sidebar from '../../components/Sidebar/Sidebar';
 
 export default function GetMainModule() {
   const voxelScene = new VoxelScene();
@@ -10,8 +10,7 @@ export default function GetMainModule() {
   return (
     <div className="container">
       <div className="grid-sidebar">
-        <p>Sidebar</p>
-        <ExportDropdown voxelScene={voxelScene} />
+        <Sidebar voxelScene={voxelScene} />
       </div>
       <div className="grid-slider">
         <div className="grey" />

@@ -1,11 +1,17 @@
 import React from 'react';
 import Button from 'react-bootstrap/Button';
 import Dropdown, { Option } from 'react-dropdown';
-import { OBJExporter } from '../addons/exporters/OBJExporter';
-import { GLTFExporter } from '../addons/exporters/GLTFExporter';
-import { STLExporter } from '../addons/exporters/STLExporter';
+
+import { faFileExport } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+import { OBJExporter } from '../../addons/exporters/OBJExporter';
+import { GLTFExporter } from '../../addons/exporters/GLTFExporter';
+import { STLExporter } from '../../addons/exporters/STLExporter';
+
 import 'react-dropdown/style.css';
 import './container.css';
+import SendFileToClient from '../SendFile';
 
 const exportersDropdown = [
   { value: '0', label: 'OBJ' },
@@ -18,22 +24,13 @@ const exporters = [OBJExporter, GLTFExporter, STLExporter];
 const defaultSelection = exportersDropdown[0];
 
 let selectedExporter = new exporters[0]();
-let selectedOption: number;
-let fileName: string = 'test';
+let selectedOption: number = 0;
+const fileName: string = 'export';
 
 function DropdownChanged(event: Option) {
   selectedOption = Number.parseInt(event.value, 10);
 
   selectedExporter = new exporters[selectedOption]();
-}
-
-// Creates a hidden element to handle links in the html page, sourced from: https://threejs.org/examples/misc_exporter_obj.html
-const link = document.createElement('a');
-link.style.display = 'none';
-document.body.appendChild(link);
-
-function prepareFile(contents) {
-  return new Blob([contents], { type: 'text/plain' });
 }
 
 function saveFile(voxelScene) {
@@ -45,14 +42,12 @@ function saveFile(voxelScene) {
   fileNameCompiled += '.';
   fileNameCompiled += exportersDropdown[selectedOption].label.toLowerCase();
 
-  link.href = URL.createObjectURL(prepareFile(parsedInfo));
-  link.download = fileNameCompiled;
-  link.click();
+  SendFileToClient(parsedInfo, fileNameCompiled);
 }
 
 export default function ExportDropdown(props) {
   return (
-    <div className="dropdownContainer">
+    <div className="flexbox">
       <Dropdown
         options={exportersDropdown}
         onChange={DropdownChanged}
@@ -60,15 +55,14 @@ export default function ExportDropdown(props) {
         className="dropdownItemLarge"
       />
       <Button
-        variant="light"
+        type="button"
         onClick={() => {
           saveFile(props.voxelScene);
+          className = 'btn btn-primary';
         }}
       >
-        Export
+        <FontAwesomeIcon icon={faFileExport} /> Export
       </Button>
     </div>
   );
 }
-
-// export default { ExportDropdown };

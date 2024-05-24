@@ -1,0 +1,63 @@
+.footer {
+  text-align: center;
+  font-size: 12px;
+}
+
+.footer a{
+  color: inherit;
+}
+
+.flexBoxVertical {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.item {
+  justify-content: center;
+}
+
+.itemSecondToLast {
+  justify-content: center;
+  margin-top: auto;
+
+}
+
+.item:last-of-type{
+
+}
+
+.exportBox {
+  background-color: #262426;
+  border-radius: 10px;
+  margin-top: 20px;
+  display:inline-block;
+  justify-content: center;
+  width: 80%;
+}
+
+.saveLoadBox {
+  display:flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+
+  text-wrap: nowrap;
+
+  border-radius: 10px;
+  padding: 25px;
+  margin: auto;
+  max-height: 100px;
+  min-height: 10px;
+  width: 30%;
+  background-color: #262426;
+
+}
+
+.largeText {
+  width: 100%;
+  height: 100%;
+
+  font-size: 20px;
+}
