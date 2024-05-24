@@ -33,6 +33,10 @@
 
 <p><i>This project was created for my university assignment, Tools Development; which we are tasked to create a tool to assist game developers.</i></p>
 
+## Installation
+
+Just simply run `npm install` in a terminal in the root folder, then run `npm build` for testing. I suggest using VSCode as there are preset tasks you can use.
+
 ## External Software used
 
 ### <a href=https://github.com/electron-react-boilerplate/electron-react-boilerplate/>Utilising the Electron React Boilerplate</a>
