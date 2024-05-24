@@ -13,33 +13,8 @@ import {
 
 import InputHandler from './ClickHandler';
 import Settings from './Settings';
-import VoxelScene from './Voxel/VoxelScene';
 
-function OnHoverBox(props: any) {
-  const ref = useRef();
-
-  const [hovered, hover] = useState(false);
-  const [clicked, click] = useState(false);
-
-  useEffect(() => {
-    props.objAdd(ref);
-  });
-
-  return (
-    <mesh
-      {...props}
-      ref={ref}
-      scale={clicked ? props.cellSize + props.cellSize * 0.5 : props.cellSize}
-      onClick={() => click(!clicked)}
-      onPointerOver={() => hover(true)}
-      onPointerOut={() => hover(false)}
-    >
-      <boxGeometry args={[props.cellSize, props.cellSize, props.cellSize]} />
-      <meshStandardMaterial color={hovered ? 'hotpink' : 'orange'} />
-    </mesh>
-  );
-}
-
+// Floor grid
 function DrawGrid(props: any) {
   const gridConfig = {
     cellSize: props.cellSize,
@@ -59,6 +34,7 @@ function DrawGrid(props: any) {
   return <Grid position={position} args={[1, 1]} {...gridConfig} />;
 }
 
+// Main JSX function for ThreeJS, check the ClickHandler.tsx for input and VoxelScene.tsx for creating voxels.
 class Three extends React.Component {
   private voxelScene;
 
@@ -67,7 +43,6 @@ class Three extends React.Component {
   constructor(props) {
     super(props);
     this.voxelScene = props.voxelScene;
-    console.log(this.voxelScene);
     this.input = new InputHandler(this.voxelScene);
   }
 

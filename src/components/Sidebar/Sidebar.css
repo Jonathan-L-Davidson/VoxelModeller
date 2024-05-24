@@ -1,9 +1,10 @@
 .footer {
   text-align: center;
   font-size: 12px;
+  margin-top: 20%;
 }
 
-.footer a{
+.footer a {
   color: inherit;
 }
 
@@ -21,24 +22,19 @@
 .itemSecondToLast {
   justify-content: center;
   margin-top: auto;
-
-}
-
-.item:last-of-type{
-
 }
 
 .exportBox {
   background-color: #262426;
   border-radius: 10px;
   margin-top: 20px;
-  display:inline-block;
+  display: inline-block;
   justify-content: center;
   width: 80%;
 }
 
 .saveLoadBox {
-  display:flex;
+  display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
   justify-content: center;
@@ -52,7 +48,6 @@
   min-height: 10px;
   width: 30%;
   background-color: #262426;
-
 }
 
 .largeText {

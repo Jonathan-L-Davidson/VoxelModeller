@@ -27,6 +27,7 @@ export default class Sidebar extends React.Component {
     super(props);
     this.voxelScene = props.voxelScene;
   }
+
   render() {
     return (
       <div className="flexBoxVertical">
@@ -61,9 +62,9 @@ export default class Sidebar extends React.Component {
           </div>
         </div>
         <div className="item">
-          <p className="footer">
+          <div className="footer">
             <Footer />
-          </p>
+          </div>
         </div>
       </div>
     );

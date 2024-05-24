@@ -33,14 +33,15 @@ function DropdownChanged(event: Option) {
   selectedExporter = new exporters[selectedOption]();
 }
 
-function saveFile(voxelScene) {
-  console.log(selectedExporter);
-  console.log(voxelScene);
+// Exports a 3D model into a file with a dialogue window.
+function SaveFile(voxelScene) {
+  // console.log(selectedExporter);
+  // console.log(voxelScene);
 
   const parsedInfo = selectedExporter.parse(voxelScene.voxelGroup);
   let fileNameCompiled: string = fileName;
   fileNameCompiled += '.';
-  fileNameCompiled += exportersDropdown[selectedOption].label.toLowerCase();
+  fileNameCompiled += exportersDropdown[selectedOption].label.toLowerCase(); // Creates the .obj or .stl or .gltf
 
   SendFileToClient(parsedInfo, fileNameCompiled);
 }
@@ -56,9 +57,9 @@ export default function ExportDropdown(props) {
       />
       <Button
         type="button"
+        className="btn btn-primary"
         onClick={() => {
-          saveFile(props.voxelScene);
-          className = 'btn btn-primary';
+          SaveFile(props.voxelScene);
         }}
       >
         <FontAwesomeIcon icon={faFileExport} /> Export

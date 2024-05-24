@@ -52,20 +52,24 @@ export default class InputHandler {
   private floorPlane;
 
   constructor(voxelScene) {
+    this.voxelScene = voxelScene;
+
+    // Setup the hidden floor plane
     this.floorPlaneGeo = new THREE.PlaneGeometry(
       300 * Settings.cellSize,
       300 * Settings.cellSize,
     );
+
     this.floorPlane = new THREE.Mesh(
       this.floorPlaneGeo,
       new THREE.MeshBasicMaterial({ visible: false, side: THREE.DoubleSide }),
     );
 
     this.floorPlane.position.setY(0.1);
-
     this.floorPlane.rotateX(-0.5 * Math.PI);
-    this.objects.push(this.floorPlane);
+    this.objects.push(this.floorPlane); // Makes it hit detectable.
 
+    // Highlight (red box) which is used as a pointer setup.
     this.highlightGeo = new THREE.BoxGeometry(
       Settings.cellSize,
       Settings.cellSize,
@@ -73,18 +77,17 @@ export default class InputHandler {
     );
 
     this.highlightMesh = new THREE.Mesh(this.highlightGeo, this.highlightMat);
-
-    this.voxelScene = voxelScene;
   }
 
   OnCreate = (state) => {
-    // console.log(state);
+    // We add our meshes to the scene here as the scene is undefined until we call OnCreate.
     this.camera = state.camera;
     this.scene = state.scene;
     this.scene.add(this.highlightMesh);
     this.scene.add(this.floorPlane);
   };
 
+  // Useful if you need to add a mesh for collision
   AddObject = (obj) => {
     // console.log(obj);
     if (!this.objects.includes(obj.current)) {
@@ -94,6 +97,8 @@ export default class InputHandler {
 
   OnMouseClick = (event) => {
     // console.log('Clicked!');
+
+    // We keep a track of where we originally clicked with the cursor.
     this.clickedXY.set(event.clientX, event.clientY);
     this.mouseDown = true;
   };
@@ -101,13 +106,16 @@ export default class InputHandler {
   OnMouseReleased = (event) => {
     // console.log(event);
 
+    // Get the location of where we released the click.
     const releasedPos: THREE.Vector2 = new THREE.Vector2(
       event.clientX,
       event.clientY,
     );
 
+    // Get the distance between the gap the mouse makes
     const dist = releasedPos.distanceTo(this.clickedXY);
 
+    // Only handle the clicks if the mouse hasn't moved much at all.
     if (dist < this.placementThreshold) {
       switch (event.button) {
         case ButtonInput.left:

@@ -26,16 +26,19 @@ export default class VoxelScene {
     this.scene = event.scene;
     this.scene.add(this.voxelGroup);
 
+
+    // Handling the file loading.
     this.uploadElement.style.display = 'none';
     this.uploadElement.type = 'file';
     this.uploadElement.id = 'file';
     document.body.appendChild(this.uploadElement);
 
     this.uploadElement.oninput = async (input) => {
-      const inputFileContents = await this.HandleFileInput(input);
-      const result = JSON.parse(inputFileContents);
-      console.log(result);
-      this.UpdateScene(result);
+      const inputFileContents = await this.HandleFileInput(input); // Gets the JSON string
+      const result = JSON.parse(inputFileContents); // Turns the JSON string into an object
+      // console.log(result);
+      this.ClearVoxels(); // Clear all voxels in the scene
+      this.UpdateScene(result); // Update the scene with the new object.
     };
   }
 
@@ -59,6 +62,7 @@ export default class VoxelScene {
     this.uploadElement.click();
   }
 
+  // Parses the JSON file into a JSON string
   async HandleFileInput(input) {
     if (typeof window.FileReader !== 'function') {
       console.error('Filereader doesnt exist on this browser.');
@@ -68,10 +72,15 @@ export default class VoxelScene {
       console.error('Empty filelist.');
     }
 
+    // Outputs the text, however you must call await on the function itself as await doesn't wait on this function here?
     const fileData: string = await new Response(
       input.srcElement.files[0],
     ).text();
+
     return fileData;
+
+    // This didn't work because the way the function is called is within the input's own scope, so `this` was not VoxelScene.
+
     // const fileReader = new FileReader(); // I have no idea why but file reader refuses to exist in any scope :(
     // fileReader.addEventListener('load', () => {
     //   return fileReader.result;
@@ -79,6 +88,7 @@ export default class VoxelScene {
     // fileReader.readAsText(input.srcElement.files[0]);
   }
 
+  // Updates the voxel scene with the new data provided.
   UpdateScene(result) {
     result.voxelPosition.forEach((element) => {
       const vec3 = new THREE.Vector3(element[0], element[1], element[2]);
@@ -86,12 +96,11 @@ export default class VoxelScene {
     });
   }
 
-  // Position MUST be floored() and divided by voxelsize, props are data for voxel
   AddVoxel(position: THREE.Vector3, props) {
     const pos: THREE.Vector3 = new THREE.Vector3();
 
     pos.copy(position);
-    const positionString: string = JSON.stringify(pos);
+    const positionString: string = JSON.stringify(pos); // Using a string as the key seems to prevent it from using the position as a pointer.
 
     // If the position of the voxel placement is valid.
     const voxelT = this.voxels.get(positionString);
@@ -108,7 +117,7 @@ export default class VoxelScene {
       // Thanks javascript! The solution was to stringify/serialise it.
 
       this.voxels.set(positionString, voxel);
-      console.log(position);
+      //console.log(position);
 
       this.UpdateVoxelGeometry();
     } else {
@@ -119,14 +128,19 @@ export default class VoxelScene {
   RemoveVoxel(position: THREE.Vector3) {
     const pos: THREE.Vector3 = new THREE.Vector3();
     pos.copy(position);
-    const positionString: string = JSON.stringify(pos);
+    const positionString: string = JSON.stringify(pos); // Using a string as the key seems to prevent it from using the position as a pointer.
 
-    console.log(position);
+    // console.log(position);
 
     this.voxels.delete(positionString);
     this.UpdateVoxelGeometry();
   }
 
+  ClearVoxels() {
+    this.voxels.clear();
+  }
+
+  // Rebuilds the mesh for the scene to render.
   UpdateVoxelGeometry() {
     this.voxelMeshes = []; // Clear mesh array.
     this.voxelGroup.clear();
