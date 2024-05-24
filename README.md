@@ -9,17 +9,17 @@
 ### General controls
 
 <ul>
-<li>Left mouse click - Place Voxel</li>
-<li>Right mouse click - Remove Voxel</li>
+<li><b>Left mouse click</b> - Place Voxel</li>
+<li><b>Right mouse click</b> - Remove Voxel</li>
 </ul>
 
 
 ### Camera movement
 
 <ul>
-<li>Left mouse - Rotates camera</li>
-<li>Right mouse - Pans camera</li>
-<li>Middle mouse & Scroll wheel - Zoom</li>
+<li><b>Left mouse</b> - Rotates camera</li>
+<li><b>Right mouse</b> - Pans camera</li>
+<li><b>Middle mouse</b> & Scroll wheel - Zoom</li>
 </ul>
 
 
