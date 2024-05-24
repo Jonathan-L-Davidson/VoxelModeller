@@ -1,0 +1,49 @@
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  user-select: none;
+
+  background-color: #1e1d1e;
+  color: #e0e0e0;
+}
+
+.container {
+  width: 100vw;
+  height: 100vh;
+
+  display: grid;
+  grid-template-columns: [sidebar] 30% [slider] 1px [three] auto;
+  align-items: center;
+}
+
+.grid-sidebar {
+  align-items: stretch;
+  text-align: center;
+  width:100%;
+  height:100%;
+}
+
+.grid-slider {
+  align-items: stretch;
+  text-align: center;
+  grid-column: slider;
+}
+
+.grid-three {
+  align-items: stretch;
+  text-align: center;
+  grid-column: three;
+}
+
+.grey {
+  background-color: #595959;
+  width: 100%;
+  height: 100vh;
+}
+
+.threeJS-wrapper {
+  width: 100%;
+  height: 100vh;
+}
