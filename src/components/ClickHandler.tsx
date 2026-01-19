@@ -120,7 +120,7 @@ export default class InputHandler {
       switch (event.button) {
         case ButtonInput.left:
           console.log('Place Voxel');
-          this.voxelScene.AddVoxel(this.highlightMesh.position, null);
+          this.voxelScene.AddVoxel(this.highlightMesh.position, { color: this.voxelScene.currentColor});
           this.UpdateRaycast(); // update collision.
           break;
         case ButtonInput.right:

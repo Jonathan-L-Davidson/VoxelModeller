@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import Voxel from './Voxel';
 import Settings from '../Settings';
 import SendFileToClient from '../SendFile';
+import MaterialReference from './MaterialReference';
+import { json } from 'stream/consumers';
 
 export default class VoxelScene {
   private scene: THREE.Scene;
@@ -12,7 +14,11 @@ export default class VoxelScene {
 
   public voxelGroup = new THREE.Group();
 
-  private voxelMaterial = new THREE.MeshStandardMaterial({ color: 0xd98d26 });
+  private colorTable: Map<string, MaterialReference> = new Map<string, MaterialReference>();
+
+  public currentColor: THREE.Color = new THREE.Color(0xd98d26);
+
+  private defaultMaterial = new MaterialReference({ color: this.currentColor });
 
   private voxelGeometry = new THREE.BoxGeometry(
     Settings.cellSize,
@@ -46,13 +52,21 @@ export default class VoxelScene {
 
   SaveScene() {
     const jsonInfo = {
-      voxelPosition: [],
+      voxelData: [{}],
     };
 
     this.voxels.forEach((values) => {
-      const pos: number[] = values.position.toArray();
-      jsonInfo.voxelPosition.push(pos);
+      const posArray: number[] = values.position.toArray();
+
+      const voxelJSON = {
+        pos: posArray,
+        color: values.color,
+      };
+
+      jsonInfo.voxelData.push(voxelJSON);
     });
+
+    jsonInfo.voxelData.splice(0,1); // Due to my inexperience with this lovely language, this is my jank to remove the first element from the scene.
 
     const parsedInfo = JSON.stringify(jsonInfo);
     SendFileToClient(parsedInfo, 'VoxelEditorScene.json');
@@ -90,11 +104,28 @@ export default class VoxelScene {
 
   // Updates the voxel scene with the new data provided.
   UpdateScene(result) {
-    result.voxelPosition.forEach((element) => {
-      const vec3 = new THREE.Vector3(element[0], element[1], element[2]);
-      this.AddVoxel(vec3, null);
+    result.voxelData.forEach((voxel) => {
+
+      const vec3 = new THREE.Vector3(voxel.pos[0], voxel.pos[1], voxel.pos[2]);
+      let props = Object.create({color: null});
+      if(voxel.color.length !== 0) {
+        props.color = voxel.color;
+      }
+
+      this.AddVoxel(vec3, props);
     });
   }
+
+  GetMaterial(color) {
+    if(this.colorTable.has(color)) {
+      return this.colorTable.get(color)?.AssignColor();
+    } else {
+      let material = new MaterialReference({color: color});
+      this.colorTable.set(color, material);
+      return material.AssignColor();
+    }
+  }
+
 
   AddVoxel(position: THREE.Vector3, props) {
     const pos: THREE.Vector3 = new THREE.Vector3();
@@ -111,6 +142,14 @@ export default class VoxelScene {
       pos.z < Settings.maxVoxels &&
       voxelT === undefined
     ) {
+
+      // Get Color
+      if(props?.color){
+        props.material = this.GetMaterial(props.color);
+      } else {
+        props.material = this.defaultMaterial;
+      }
+
       let voxel = new Voxel(props, pos);
 
       // Some reason using pos as the setter will also update the index element for the value.
@@ -132,6 +171,20 @@ export default class VoxelScene {
 
     // console.log(position);
 
+    // Removes unused color tables
+    const voxelRef = this.voxels.get(positionString);
+    if(voxelRef) {
+      const materialRef = this.colorTable.get(voxelRef.color);
+
+      if(materialRef) {
+        materialRef.RemoveColor();
+
+        if(materialRef.GetRefCount() <= 0){
+          this.colorTable.delete(voxelRef.color);
+        }
+      }
+  }
+
     this.voxels.delete(positionString);
     this.UpdateVoxelGeometry();
   }
@@ -145,7 +198,7 @@ export default class VoxelScene {
     this.voxelMeshes = []; // Clear mesh array.
     this.voxelGroup.clear();
     this.voxels.forEach((voxels) => {
-      const mesh = new THREE.Mesh(this.voxelGeometry, this.voxelMaterial);
+      const mesh = new THREE.Mesh(this.voxelGeometry, voxels.GetMaterial().Get());
       mesh.receiveShadow = true;
       mesh.castShadow = true;
       mesh.position.set(

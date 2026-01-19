@@ -61,6 +61,12 @@ export default class Sidebar extends React.Component {
             </Button>
           </div>
         </div>
+        <div className="colorPicker">
+          <input type="color" id="html5colorpicker" onChange={(value) => {
+            //console.log("Value changed: ", value.target.value);
+            this.voxelScene.currentColor = value.target.value;
+          }} defaultValue="#d98d26" />
+        </div>
         <div className="item">
           <div className="footer">
             <Footer />

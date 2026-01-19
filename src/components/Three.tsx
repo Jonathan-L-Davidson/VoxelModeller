@@ -14,6 +14,9 @@ import {
 import InputHandler from './ClickHandler';
 import Settings from './Settings';
 
+import "./body.css"
+import { configure } from '@testing-library/react';
+
 // Floor grid
 function DrawGrid(props: any) {
   const gridConfig = {
@@ -51,6 +54,7 @@ class Three extends React.Component {
       <Canvas
         shadows
         gl={{ antialias: false }} // Use postprocessing SMAA instead.
+
         camera={{
           position: [0, Settings.cellSize, Settings.cellSize * 2],
           fov: 70,
