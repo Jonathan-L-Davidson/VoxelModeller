@@ -7,6 +7,7 @@ import { json } from 'stream/consumers';
 
 export default class VoxelScene {
   private scene: THREE.Scene;
+  public eventSubscriber = new Object();
 
   private voxels: Map<string, Voxel> = new Map<string, Voxel>();
 
@@ -14,11 +15,11 @@ export default class VoxelScene {
 
   public voxelGroup = new THREE.Group();
 
-  private colorTable: Map<string, MaterialReference> = new Map<string, MaterialReference>();
+  public colorTable: Map<string, MaterialReference> = new Map<string, MaterialReference>();
 
-  public currentColor: THREE.Color = new THREE.Color(0xd98d26);
+  public currentColor = '#d98d26';
 
-  private defaultMaterial = new MaterialReference({ color: this.currentColor });
+  private defaultMaterial: MaterialReference;
 
   private voxelGeometry = new THREE.BoxGeometry(
     Settings.cellSize,
@@ -32,6 +33,10 @@ export default class VoxelScene {
     this.scene = event.scene;
     this.scene.add(this.voxelGroup);
 
+    const currColor = new THREE.Color();
+    currColor.setStyle(this.currentColor);
+
+    this.defaultMaterial = new MaterialReference({ color: currColor });
 
     // Handling the file loading.
     this.uploadElement.style.display = 'none';
@@ -41,6 +46,12 @@ export default class VoxelScene {
 
     this.uploadElement.oninput = async (input) => {
       const inputFileContents = await this.HandleFileInput(input); // Gets the JSON string
+
+      if(inputFileContents === null){
+        console.warn("No file provided");
+        return;
+      }
+
       const result = JSON.parse(inputFileContents); // Turns the JSON string into an object
       // console.log(result);
       this.ClearVoxels(); // Clear all voxels in the scene
@@ -116,12 +127,13 @@ export default class VoxelScene {
     });
   }
 
-  GetMaterial(color) {
+  GetMaterial(color: string) {
     if(this.colorTable.has(color)) {
       return this.colorTable.get(color)?.AssignColor();
     } else {
       let material = new MaterialReference({color: color});
       this.colorTable.set(color, material);
+      this.eventSubscriber.OnColorAdded(this.colorTable);
       return material.AssignColor();
     }
   }
@@ -181,6 +193,7 @@ export default class VoxelScene {
 
         if(materialRef.GetRefCount() <= 0){
           this.colorTable.delete(voxelRef.color);
+          this.eventSubscriber.OnColorRemoved(this.colorTable);
         }
       }
   }

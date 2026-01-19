@@ -41,7 +41,7 @@ function SaveFile(voxelScene) {
   const parsedInfo = selectedExporter.parse(voxelScene.voxelGroup);
   let fileNameCompiled: string = fileName;
   fileNameCompiled += '.';
-  fileNameCompiled += exportersDropdown[selectedOption].label.toLowerCase(); // Creates the .obj or .stl or .gltf
+  fileNameCompiled += exportersDropdown[selectedOption].label.toLowerCase(); // Creates the .obj or .stl or .gltf extension, though this is just for filenaming. They're already parsed.
 
   SendFileToClient(parsedInfo, fileNameCompiled);
 }
